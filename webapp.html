@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Longest Drive Golf Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #87CEEB;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #game-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #golf-course {
+            width: 600px;
+            height: 300px;
+            background-color: #90EE90;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        #landscape {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0 20 Q25 0 50 20 T100 20" fill="%23228B22"/></svg>');
+            background-size: 200px 100px;
+            background-repeat: repeat-x;
+        }
+        #golfer {
+            position: absolute;
+            bottom: 80px;
+            left: 50px;
+            width: 50px;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 100"><circle cx="25" cy="20" r="15" fill="%23FFD700"/><rect x="20" y="35" width="10" height="40" fill="%23000000"/><rect x="15" y="75" width="20" height="10" fill="%23000000"/></svg>');
+            background-repeat: no-repeat;
+        }
+        #ball {
+            position: absolute;
+            bottom: 90px;
+            left: 100px;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 1s ease-out;
+        }
+        #power-meter {
+            width: 300px;
+            height: 30px;
+            background-color: #ddd;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        #power-indicator {
+            width: 10px;
+            height: 30px;
+            background-color: red;
+            position: absolute;
+            left: 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #a-link {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        }
+        #a-link a {
+        text-decoration: none;
+        color: #0e0f0e;
+        font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Longest Drive Golf Challenge</h1>
+        <div id="golf-course">
+            <div id="landscape"></div>
+            <div id="golfer"></div>
+            <div id="ball"></div>
+        </div>
+        <div id="power-meter">
+            <div id="power-indicator"></div>
+        </div>
+        <button id="hit-button">Hit!</button>
+        <p id="result"></p>
+    </div>
+    <div id="a-link">
+        <a href="passion.html">Back to Passion Page</a>
+    </div>
+    <script>
+      const powerIndicator = document.getElementById('power-indicator');
+const hitButton = document.getElementById('hit-button');
+const ball = document.getElementById('ball');
+const result = document.getElementById('result');
+
+let power = 0;
+let increasing = true;
+let animationId;
+
+function animatePowerMeter() {
+    // Generate a random speed between 1 and 4
+    let speed = Math.random() * 3 + 1;
+    
+    if (increasing) {
+        power += speed;
+        if (power >= 100) {
+            increasing = false;
+            power = 100;
+        }
+    } else {
+        power -= speed;
+        if (power <= 0) {
+            increasing = true;
+            power = 0;
+        }
+    }
+    powerIndicator.style.left = `${power}%`;
+    animationId = requestAnimationFrame(animatePowerMeter);
+}
+
+function startGame() {
+    power = 0;
+    increasing = true;
+    ball.style.left = '100px';
+    result.textContent = '';
+    animationId = requestAnimationFrame(animatePowerMeter);
+    hitButton.textContent = 'Hit!';
+    hitButton.onclick = hitBall;
+}
+
+function hitBall() {
+    cancelAnimationFrame(animationId);
+    const distance = Math.round(power * 5); // Adjust this multiplier to change the maximum distance
+    ball.style.left = `${100 + distance}px`;
+    
+    let message = '';
+    if (distance <= 150) {
+        message = 'Beginner mode activated!';
+    } else if (distance <= 275) {
+        message = 'You are an average golfer!';
+    } else if (distance <= 350) {
+        message = 'You are an advanced golfer!';
+    } else {
+        message = 'You hit like Tiger Woods!';
+    }
+    
+    result.textContent = `You hit the ball ${distance} yards! ${message}`;
+    hitButton.textContent = 'Play Again';
+    hitButton.onclick = startGame;
+}
+
+startGame();
+    </script>
+</body>
+</html>
